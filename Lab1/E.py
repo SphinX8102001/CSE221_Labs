@@ -1,23 +1,36 @@
-import sys
-
-def can_be_sorted(arr):
-    n = len(arr)
-    for _ in range(n * n):
-        changed = False
-        for i in range(n - 2):
-            if arr[i] > arr[i+1] or arr[i+1] > arr[i+2] or arr[i] > arr[i+2]:
-                arr[i:i+3] = reversed(arr[i:i+3])
-                changed = True
-        if not changed:
-            break 
+def can_sort_with_reversals(n, arr):
+    if n <= 2:
+        return True
+    working_arr = arr.copy()
+    sorted_arr = sorted(arr)
     
-    return arr == sorted(arr)
+    made_change = True
+    while made_change:
+        made_change = False
+        for i in range(n - 2):  
+            
+            sub_arr = working_arr[i:i+3]
+            reversed_sub = sub_arr[::-1]
+            correct_before = sum(1 for j in range(n) if working_arr[j] == sorted_arr[j])
+            
+            temp_arr = working_arr.copy()
+            temp_arr[i:i+3] = reversed_sub
+            correct_after = sum(1 for j in range(n) if temp_arr[j] == sorted_arr[j])
+            if correct_after > correct_before:
+                working_arr[i:i+3] = reversed_sub
+                made_change = True
+                if working_arr == sorted_arr:
+                    return True
+    
+    return working_arr == sorted_arr
 
+def main():
+    n = int(input())
+    arr = list(map(int, input().split()))
+    
+    if can_sort_with_reversals(n, arr):
+        print("YES")
+    else:
+        print("NO")
 
-N = int(sys.stdin.readline())
-arr = list(map(int, sys.stdin.readline().strip().split()))
-
-if N <= 2:
-    print("YES")
-else:
-    print("YES" if can_be_sorted(arr) else "NO")
+main()
